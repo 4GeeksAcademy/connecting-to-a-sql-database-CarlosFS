@@ -8,17 +8,22 @@ load_dotenv()
 
 # 1) Connect to the database here using the SQLAlchemy's create_engine function
 
-connection_string = "postgresql://gitpod:postgres@localhost/sample_db"
+load_dotenv()
+connection_string = (
+    f"postgresql://{os.getenv('DB_USER')}:"
+    f"{os.getenv('DB_PASSWORD')}@"
+    f"{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/"
+    f"{os.getenv('DB_NAME')}"
+)
 engine = create_engine(connection_string).execution_options(autocommit=True)
 conn = engine.connect()
 
-engine.execute("""DROP TABLE book_authors;
-
-DROP TABLE books;
-
-DROP TABLE authors;
-
-DROP TABLE publishers;""")
+engine.execute("""
+DROP TABLE IF EXISTS book_authors CASCADE;
+DROP TABLE IF EXISTS books CASCADE;
+DROP TABLE IF EXISTS authors CASCADE;
+DROP TABLE IF EXISTS publishers CASCADE;
+""")
 
 # 2) Execute the SQL sentences to create your tables using the SQLAlchemy's execute function
 engine.execute(""" CREATE TABLE publishers(
